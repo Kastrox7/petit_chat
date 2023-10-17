@@ -10,7 +10,15 @@
     </head>
     <body>
         {% block body %}
-            Hello World!
+            <div>
+                {% for message in messages %}
+                    <div>{{ message.author.username }}: {{ message.content }}</div>
+                {% endfor %}
+            </div>
+            {{ form_start(messageForm) }}
+                {{ form_row(messageForm.content) }}
+                <button type="submit" class="btn">Send!</button>
+            {{ form_end(messageForm) }}
         {% endblock %}
     </body>
 </html>

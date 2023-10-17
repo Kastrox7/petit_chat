@@ -64,4 +64,10 @@ class Message
 
         return $this;
     }
+
+    #[ORM\PrePersist]
+    public function setCreatedAtValue()
+    {
+        $this->createAt = new \DateTimeImmutable();
+    }
 }
