@@ -1,7 +1,0 @@
-# config/packages/prod/liip_imagine.yaml
-liip_imagine:
-    # Indispensable pour autoriser l'accès aux fichiers hors du répertoire root
-    loaders:
-        default:
-            filesystem:
-                locator: filesystem_insecure
