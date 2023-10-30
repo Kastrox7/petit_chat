@@ -59,19 +59,98 @@
         }
     }
 
+    function distance(a, b) {
+        let x = a.x - b.x;
+        let y = a.y - b.y;
+        return Math.sqrt(x * x + y * y);
+    }
+
+    function angle(a, b) {
+        let u1 = a.x - b.x;
+        let u2 = a.y - b.y;
+        return Math.acos(u1 / Math.sqrt(u1*u1 + u2*u2));
+    }
+
     function addTriangle() {
         let t = q.dequeue();
         let p = new Point((t.a.x + t.b.x) / 2, (t.a.y + t.b.y) / 2);
-        q.enqueue(new Triangle(t.a, t.c, p));
-        q.enqueue(new Triangle(t.b, t.c, p));
         let newDiv = document.createElement('div');
-        newDiv.style.backgroundColor = randomColor();
-        t.cont.append(newDiv);
-        console.log(newDiv);
+        newDiv.classList.add("triangle");
+        let rad = angle(t.c, p) * 4 / Math.PI;
+        let dist = distance(t.a, t.c);
+        let hyp = distance(t.a, t.b) / 2;
+        let top = 0;
+        let left = 0;
+        switch (Math.round(rad) % 4) {
+        case 1:
+            if (p.y < t.c.y) { /* Bas droite */
+                top = t.b.y;
+                left = t.a.x;
+                newDiv.style.borderLeft = dist.toString() + "px solid transparent";
+                newDiv.style.borderBottom = dist.toString() + "px solid " + randomColor();
+            }
+            else { /* Haut droite */
+                top = t.b.y;
+                left = t.b.x;
+                newDiv.style.borderLeft = dist.toString() + "px solid transparent";
+                newDiv.style.borderTop = dist.toString() + "px solid " + randomColor();
+            }
+            break;
+        case 2:
+            newDiv.style.borderLeft = hyp.toString() + "px solid transparent";
+            newDiv.style.borderRight = hyp.toString() + "px solid transparent";
+            if (p.y < t.c.y) { /* Haut */
+                top = t.a.x;
+                left = t.a.y;
+                newDiv.style.borderTop = hyp.toString() + "px solid" + randomColor();
+            }
+            else { /* Bas */
+                top = t.c.y;
+                left = t.b.x;
+                newDiv.style.borderBottom = hyp.toString() + "px solid" + randomColor();
+            }
+            break;
+        case 3:
+            if (p.y < t.c.y) { /* Bas Gauche */
+                top = t.a.y;
+                left = t.a.x;
+                newDiv.style.borderRight = dist.toString() + "px solid transparent";
+                newDiv.style.borderBottom = dist.toString() + "px solid " + randomColor();
+            }
+            else { /* Haut gauche */
+                top = t.c.y;
+                left = t.c.x;
+                newDiv.style.borderRight = dist.toString() + "px solid transparent";
+                newDiv.style.borderTop = dist.toString() + "px solid " + randomColor();
+            }
+            break;
+        case 0:
+            newDiv.style.borderTop = hyp.toString() + "px solid transparent";
+            newDiv.style.borderBottom = hyp.toString() + "px solid transparent";
+            if (p.x < t.c.x) { /* Gauche */
+                top = t.b.y;
+                left = t.b.x;
+                newDiv.style.borderLeft = hyp.toString() + "px solid " + randomColor();
+            }
+            else { /* Droite */
+                top = t.a.y;
+                left = t.c.x;
+                newDiv.style.borderRight = hyp.toString() + "px solid " + randomColor();
+            }
+            break;
+        }
+        newDiv.style.top = top.toString() + "px";
+        newDiv.style.left = left.toString() + "px";
+        document.getElementById('container').append(newDiv);
+        q.enqueue(new Triangle(t.c, t.a, p, newDiv));
+        q.enqueue(new Triangle(t.b, t.c, p, newDiv));
     }
 
     let q = new Queue();
     q.enqueue(new Triangle(new Point(0, 0), new Point(sqLen, sqLen), new Point(0, sqLen), document.getElementById("container")));
+    q.enqueue(new Triangle(new Point(sqLen, sqLen), new Point(0, 0), new Point(sqLen, 0), document.getElementById("container")));
+
+    window.setInterval(addTriangle, 0);
 
 </script>
 
@@ -81,5 +160,13 @@
         height: 800px;
         width: 800px;
         margin: auto;
+        position: relative;
+    }
+
+    .triangle {
+        height: 0px;
+        width: 0px;
+        display: inline-block;
+        position: absolute;
     }
 </style>
