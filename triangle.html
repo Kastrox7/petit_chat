@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<body>
+    <button onclick="addTriangle()">Add Triangle</button>
+    <div id="container"></div>
+</body>
+
+<script>
+    class Queue {
+        constructor() {
+            this.elements = {};
+            this.head = 0;
+            this.tail = 0;
+        }
+        enqueue(element) {
+            this.elements[this.tail] = element;
+            this.tail++;
+        }
+        dequeue() {
+            const item = this.elements[this.head];
+            delete this.elements[this.head];
+            this.head++;
+            return item;
+        }
+        peek() {
+            return this.elements[this.head];
+        }
+        get length() {
+            return this.tail - this.head;
+        }
+        get isEmpty() {
+            return this.length === 0;
+        }
+    }
+
+    function randomColor() {
+        return "#" + Math.floor(Math.random()*16777215).toString(16);
+    }
+
+    let sqLen = 800;
+
+    class Point {
+        constructor(x, y) {
+            if (x < 0 || x > sqLen || y < 0 || y > sqLen) {
+                console.error('Non-valid point : ' + x + ', ' + y);
+            }
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    class Triangle {
+        constructor(x, y, z, cont) {
+            this.a = x;
+            this.b = y;
+            this.c = z;
+            this.cont = cont;
+        }
+    }
+
+    function addTriangle() {
+        let t = q.dequeue();
+        let p = new Point((t.a.x + t.b.x) / 2, (t.a.y + t.b.y) / 2);
+        q.enqueue(new Triangle(t.a, t.c, p));
+        q.enqueue(new Triangle(t.b, t.c, p));
+        let newDiv = document.createElement('div');
+        newDiv.style.backgroundColor = randomColor();
+        t.cont.append(newDiv);
+        console.log(newDiv);
+    }
+
+    let q = new Queue();
+    q.enqueue(new Triangle(new Point(0, 0), new Point(sqLen, sqLen), new Point(0, sqLen), document.getElementById("container")));
+
+</script>
+
+<style>
+    #container {
+        border: 10px solid black;
+        height: 800px;
+        width: 800px;
+        margin: auto;
+    }
+</style>
